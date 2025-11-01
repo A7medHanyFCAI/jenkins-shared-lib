@@ -16,9 +16,9 @@ def dockerBuildAndPush() {
         )]) {
             sh """
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker build -t java-app:${BUILD_NUMBER} .
-                docker tag java-app:${BUILD_NUMBER} $DOCKER_USER/java-app:${BUILD_NUMBER}
-                docker push $DOCKER_USER/java-app:${BUILD_NUMBER}
+                docker build -t shared-lib-image:${BUILD_NUMBER} .
+                docker tag shared-lib-image:${BUILD_NUMBER} $DOCKER_USER/shared-lib-image:${BUILD_NUMBER}
+                docker push $DOCKER_USER/shared-lib-image:${BUILD_NUMBER}
                 docker logout
             """
         }
@@ -29,8 +29,8 @@ def deployApp() {
     stage('Deploy') {
         echo 'Deploying the container (from shared lib)...'
         sh """
-            docker rm -f java-app || true
-            docker run -d --name java-app -p 8090:8090 ahmedhany28/java-app:${BUILD_NUMBER}
+            docker rm -f shared-lib-image || true
+            docker run -d --name shared-lib-image -p 8090:8090 ahmedhany28/shared-lib-image:${BUILD_NUMBER}
         """
     }
 }
